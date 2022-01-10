@@ -29,8 +29,27 @@ function titleClickHandler(event){
   /* add class 'active' to the correct article */
 }
 
-const links = document.querySelectorAll('.titles a');
+function generateTitleLinks(){
+	const optArticleSelector = '.post',
+	optTitleSelector = '.post-title',
+	optTitleListSelector = '.titles';
+	const titleList = document.querySelector(optTitleListSelector);
+	const articles = document.querySelectorAll(optArticleSelector);
+	titleList.innerHTML = '';
+	let html = '';
+	for(let article of articles){
+		const articleId = article.id;
+		const articleTitle = article.querySelector(optTitleSelector).innerHTML;
+		const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>';
+		html = html + linkHTML;		
+	}
+	titleList.innerHTML = html;
+	
+	const links = document.querySelectorAll('.titles a');
 
-for(let link of links){
-  link.addEventListener('click', titleClickHandler);
+	for(let link of links){
+		link.addEventListener('click', titleClickHandler);
+	}
 }
+
+generateTitleLinks();
