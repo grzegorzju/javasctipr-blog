@@ -25,7 +25,8 @@ function titleClickHandler(event){
 	const optArticleSelector = '.post',
 	optTitleSelector = '.post-title',
 	optTitleListSelector = '.titles',
-	optArticleTagsSelector = '.post-tags .list';
+	optArticleTagsSelector = '.post-tags .list',
+	optTagsListSelector = '#tagList';
 	const articles = document.querySelectorAll(optArticleSelector);
 
 function generateTitleLinks(customSelector = ''){
@@ -70,7 +71,6 @@ function tagClickHandler(event){
   const href = clickedElement.getAttribute("href");
   const tagLinks = document.querySelectorAll('a[href^="#tag-"]');
   const tag = href.split("-")[1];
-  console.log(tag);
   for(let tagLink of tagLinks){
 	tagLink.classList.remove("active");
   }
@@ -105,7 +105,6 @@ function authorClickHandler(event){
   const authorLinks = document.querySelectorAll('a[href^="#author-"]');
   const author = href.split("-")[1]+" "+href.split("-")[2];
   const dataAuthor = href.split("-")[1]+"-"+href.split("-")[2]
-  console.log(author);
   for(let authorLink of authorLinks){
 	authorLink.classList.remove("active");
   }
@@ -123,12 +122,61 @@ function addClickListenersToAuthors(){
   }
 }
 
+function generateTags(){
+  let allTags = {};
+	for(let article of articles){
+		let html = '';
+		const articleId = article.id;
+		const articleTags = article.getAttribute("data-tags").split(" ");
+		for(let tag of articleTags){
+			html = html + '<li><a href="#tag-'+tag+'">'+tag+'</a></li>'
+			  if(!allTags.hasOwnProperty(tag)){
+				/* [NEW] add generated code to allTags array */
+				allTags[tag] = 1;
+			  }else{
+				allTags[tag]++;
+			  }		
+		}
+	}
+  const tagList = document.querySelector(optTagsListSelector);
+  let allTagsHTML = '';
+  for(let tag in allTags){
+	  allTagsHTML +='<li><a href="#tag-'+tag+'">'+ tag + ' (' + allTags[tag] + ') </a></li>';
+  }
+  tagList.innerHTML = allTagsHTML;
+}
+
+function generateAuthorList(){
+  const authorsAll = document.querySelectorAll('a[href^="#author-"]');
+  const authorsList = document.getElementById('authList');
+  let authorsArray = {};
+  let html = "";
+  for(let authorHash of authorsAll){
+	  const authorName = authorHash.getAttribute("href").replace("#author-","");
+	  if(!authorsArray.hasOwnProperty(authorName)){
+		  authorsArray[authorName] = 1;
+	  }else{
+		  authorsArray[authorName]++;
+	  }
+  }
+  console.log(authorsArray);
+  for(let author in authorsArray){
+	  console.log(author);
+	  html = html + '<li><a href="#author-'+author+'">'+author.replace("-"," ")+'('+authorsArray[author]+')</a></li>'
+  }
+
+  console.log(html);
+  authorsList.innerHTML = html;
+}
+
+
 generateTags();
 
 addClickListenersToTags();
 
 generateAuthorsLinks();
+generateAuthorList();	
 addClickListenersToAuthors();
 
-
 generateTitleLinks();
+
